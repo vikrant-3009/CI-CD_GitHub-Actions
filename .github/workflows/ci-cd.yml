@@ -50,7 +50,10 @@ jobs:
         run: |
          mvn sonar:sonar \
           -Dsonar.projectKey=simple-calculator-1 \
-          -Dsonar.java.binaries=target/classes
+          -Dsonar.sources=src/main/java \
+          -Dsonar.tests=src/test/java \
+          -Dsonar.java.binaries=target/classes \
+          -Dsonar.coverage.jacoco.xmlReportPaths=**/jacoco.xml
 
       - name: Upload to Artifactory
         env:
