@@ -32,16 +32,9 @@ jobs:
   sonar-and-artifactory:
     name: analyse-and-upload
     runs-on: centos-1
-    needs: maven
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-#      - name: Download Build Artifact
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: build-artifact
-#          path: target
 
       - name: Sonar Analysis
         env:
