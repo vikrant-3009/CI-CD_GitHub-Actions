@@ -62,4 +62,4 @@ jobs:
           JF_URL: ${{ secrets.ARTIFACTORY_URL }}
         run: |
           curl -u "$JF_USERNAME:$JF_PASSWORD" \
-          -T target/calculator-app.war "$JF_URL/artifactory/java-app-1/dev/calculator-app.war"
+          -T **/target/calculator-app.war "$JF_URL/java-app-1/dev/calculator-app.war"
