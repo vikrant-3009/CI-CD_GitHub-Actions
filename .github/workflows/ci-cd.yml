@@ -44,10 +44,10 @@ jobs:
           path: target
 
       - name: Sonar Analysis
-        uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: mvn sonar:sonar -Dsonar.projectKey=simple-calculator-1
 
       - name: Upload to Artifactory
         env:
