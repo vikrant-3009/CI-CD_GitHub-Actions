@@ -70,15 +70,27 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push
-        uses: docker/build-push-action@v4
-        with:
-          build-args: |
-            ARTIFACTORY_USERNAME=${{ secrets.ARTIFACTORY_USERNAME }}
-            ARTIFACTORY_PASSWORD=${{ secrets.ARTIFACTORY_PASSWORD }}
-            ARTIFACTORY_URL=${{ secrets.ARTIFACTORY_URL }}
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
+#      - name: Build and Push
+#        uses: docker/build-push-action@v4
+#        with:
+#          build-args: |
+#            ARTIFACTORY_USERNAME=${{ secrets.ARTIFACTORY_USERNAME }}
+#            ARTIFACTORY_PASSWORD=${{ secrets.ARTIFACTORY_PASSWORD }}
+#            ARTIFACTORY_URL=${{ secrets.ARTIFACTORY_URL }}
+#          push: true
+#          tags: ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
+
+      - name: Build Docker Image
+        env:
+          JF_USERNAME=${{ secrets.ARTIFACTORY_USERNAME }}
+          JF_PASSWORD=${{ secrets.ARTIFACTORY_PASSWORD }}
+          JF_URL=${{ secrets.ARTIFACTORY_URL }}
+        run: |
+          docker build \
+          --build-arg="ARTIFACTORY_USERNAME=$JF_USERNAME" \
+          --build-arg="ARTIFACTORY_PASSWORD=$JF_PASSWORD" \
+          --build-arg="JF_URL=$ARTIFACTORY_URL" \
+          -t ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }} .
 
       - name: Run the container
         run: |
