@@ -4,6 +4,4 @@ ARG ARTIFACTORY_USERNAME
 ARG ARTIFACTORY_PASSWORD
 ARG ARTIFACTORY_URL
 
-RUN curl -u "${ARTIFACTORY_USERNAME}:${ARTIFACTORY_PASSWORD}" \
-    -o /usr/local/tomcat/webapps/calculator-app.war \
-    "${ARTIFACTORY_URL}/java-app-1/dev/calculator-app.war"
+RUN curl -u "${ARTIFACTORY_USERNAME}:${ARTIFACTORY_PASSWORD}" -o /usr/local/tomcat/webapps/calculator-app.war "${ARTIFACTORY_URL}/java-app-1/dev/calculator-app.war"
