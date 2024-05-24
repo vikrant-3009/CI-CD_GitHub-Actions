@@ -89,7 +89,7 @@ jobs:
           docker build \
           --build-arg="ARTIFACTORY_USERNAME=$JF_USERNAME" \
           --build-arg="ARTIFACTORY_PASSWORD=$JF_PASSWORD" \
-          --build-arg="JF_URL=$ARTIFACTORY_URL" \
+          --build-arg="ARTIFACTORY_URL=$JF_URL" \
           -t ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }} .
 
       - name: Run the container
