@@ -82,9 +82,9 @@ jobs:
 
       - name: Build Docker Image
         env:
-          JF_USERNAME=${{ secrets.ARTIFACTORY_USERNAME }}
-          JF_PASSWORD=${{ secrets.ARTIFACTORY_PASSWORD }}
-          JF_URL=${{ secrets.ARTIFACTORY_URL }}
+          JF_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+          JF_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+          JF_URL: ${{ secrets.ARTIFACTORY_URL }}
         run: |
           docker build \
           --build-arg="ARTIFACTORY_USERNAME=$JF_USERNAME" \
