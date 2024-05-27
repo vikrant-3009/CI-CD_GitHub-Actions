@@ -2,12 +2,12 @@ package com.example.controller;
 
 import com.example.service.CalculatorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
 @RequestMapping("/calc")
@@ -17,39 +17,63 @@ public class CalculatorController {
     private CalculatorService calculatorService;
 
     @GetMapping("/addition")
-    public ResponseEntity<?> getAddition(
+    public ModelAndView getAddition(
             @RequestParam double a,
-            @RequestParam double b) {
+            @RequestParam double b,
+            RedirectAttributes redirectAttributes) {
 
         String additionResponse = calculatorService.getAddition(a, b);
-        return ResponseEntity.ok(additionResponse);
+        redirectAttributes.addFlashAttribute("result", true);
+        redirectAttributes.addFlashAttribute("operation", "Addition Response");
+        redirectAttributes.addFlashAttribute("response", additionResponse);
+        return new ModelAndView("redirect:/");
     }
 
     @GetMapping("/subtraction")
-    public ResponseEntity<?> getSubtraction(
+    public ModelAndView getSubtraction(
             @RequestParam double a,
-            @RequestParam double b) {
+            @RequestParam double b,
+            RedirectAttributes redirectAttributes) {
 
         String subtractionResponse = calculatorService.getSubtraction(a, b);
-        return ResponseEntity.status(HttpStatus.OK).body(subtractionResponse);
+        redirectAttributes.addFlashAttribute("result", true);
+        redirectAttributes.addFlashAttribute("operation", "Subtraction Response");
+        redirectAttributes.addFlashAttribute("response", subtractionResponse);
+        return new ModelAndView("redirect:/");
     }
 
     @GetMapping("/multiplication")
-    public ResponseEntity<?> getMultiplication(
+    public ModelAndView getMultiplication(
             @RequestParam double a,
-            @RequestParam double b) {
+            @RequestParam double b,
+            RedirectAttributes redirectAttributes) {
 
         String multiplicationResponse = calculatorService.getMultiplication(a, b);
-        return ResponseEntity.status(HttpStatus.OK).body(multiplicationResponse);
+        redirectAttributes.addFlashAttribute("result", true);
+        redirectAttributes.addFlashAttribute("operation", "Multiplication Response");
+        redirectAttributes.addFlashAttribute("response", multiplicationResponse);
+        return new ModelAndView("redirect:/");
     }
 
     @GetMapping("/division")
-    public ResponseEntity<?> getDivision(
+    public ModelAndView getDivision(
             @RequestParam double a,
-            @RequestParam double b) {
+            @RequestParam double b,
+            RedirectAttributes redirectAttributes) {
 
-        String divisionResponse = calculatorService.getDivision(a, b);
-        return ResponseEntity.status(HttpStatus.OK).body(divisionResponse);
+        String divisionResponse;
+
+        if (b == 0) {
+            divisionResponse = "Undefined";
+            redirectAttributes.addFlashAttribute("error", true);
+        }
+        else {
+            divisionResponse = calculatorService.getDivision(a, b);
+        }
+        redirectAttributes.addFlashAttribute("result", true);
+        redirectAttributes.addFlashAttribute("operation", "Division Response");
+        redirectAttributes.addFlashAttribute("response", divisionResponse);
+        return new ModelAndView("redirect:/");
     }
 
 }
