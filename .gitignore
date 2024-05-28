@@ -1,5 +1,7 @@
 HELP.md
 target
+app/target
+selenium-testing/target
 !**/src/main/**/target/
 !**/src/test/**/target/
 
