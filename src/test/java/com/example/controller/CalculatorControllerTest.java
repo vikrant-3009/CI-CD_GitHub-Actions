@@ -1,8 +1,8 @@
 package com.example.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 
 import com.example.service.CalculatorService;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,8 +43,12 @@ public class CalculatorControllerTest {
             mockMvc.perform(get("/calc/addition")
                             .queryParam("a", String.valueOf(a))
                             .queryParam("b", String.valueOf(b)))
-                    .andExpect(status().isOk())
-                    .andExpect(content().string(expectedResponse));
+                    .andExpect(redirectedUrl("/"))
+                    .andExpect(flash().attribute("a", a))
+                    .andExpect(flash().attribute("b", b))
+                    .andExpect(flash().attribute("result", true))
+                    .andExpect(flash().attribute("operation", "Addition Response"))
+                    .andExpect(flash().attribute("response", expectedResponse));
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -64,8 +68,12 @@ public class CalculatorControllerTest {
             mockMvc.perform(get("/calc/subtraction")
                             .queryParam("a",String.valueOf(a))
                             .queryParam("b",String.valueOf(b)))
-                    .andExpect(status().isOk())
-                    .andExpect(content().string(expectedResponse));
+                    .andExpect(redirectedUrl("/"))
+                    .andExpect(flash().attribute("a", a))
+                    .andExpect(flash().attribute("b", b))
+                    .andExpect(flash().attribute("result", true))
+                    .andExpect(flash().attribute("operation", "Subtraction Response"))
+                    .andExpect(flash().attribute("response", expectedResponse));
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -85,8 +93,12 @@ public class CalculatorControllerTest {
             mockMvc.perform(get("/calc/multiplication")
                             .queryParam("a",String.valueOf(a))
                             .queryParam("b",String.valueOf(b)))
-                    .andExpect(status().isOk())
-                    .andExpect(content().string(expectedResponse));
+                    .andExpect(redirectedUrl("/"))
+                    .andExpect(flash().attribute("a", a))
+                    .andExpect(flash().attribute("b", b))
+                    .andExpect(flash().attribute("result", true))
+                    .andExpect(flash().attribute("operation", "Multiplication Response"))
+                    .andExpect(flash().attribute("response", expectedResponse));
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -95,7 +107,7 @@ public class CalculatorControllerTest {
     }
 
     @Test
-    public void getDivision() {
+    public void getDivision_NormalCase() {
         String expectedResponse = String.format("%.3f", a / b);
 
         Mockito.when(calculatorService.getDivision(
@@ -106,8 +118,38 @@ public class CalculatorControllerTest {
             mockMvc.perform(get("/calc/division")
                             .queryParam("a",String.valueOf(a))
                             .queryParam("b",String.valueOf(b)))
-                    .andExpect(status().isOk())
-                    .andExpect(content().string(expectedResponse));
+                    .andExpect(redirectedUrl("/"))
+                    .andExpect(flash().attribute("a", a))
+                    .andExpect(flash().attribute("b", b))
+                    .andExpect(flash().attribute("result", true))
+                    .andExpect(flash().attribute("operation", "Division Response"))
+                    .andExpect(flash().attribute("response", expectedResponse));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+//            throw new Exception("Error in executing test method getDivision.");
+        }
+    }
+
+    @Test
+    public void getDivision_DivideByZero() {
+        b = 0.0;
+
+        Mockito.when(calculatorService.getDivision(
+                Mockito.any(Double.class), Mockito.any(Double.class))
+        ).thenReturn("Undefined");
+
+        try {
+            mockMvc.perform(get("/calc/division")
+                            .queryParam("a",String.valueOf(a))
+                            .queryParam("b",String.valueOf(b)))
+                    .andExpect(redirectedUrl("/"))
+                    .andExpect(flash().attribute("a", a))
+                    .andExpect(flash().attribute("b", b))
+                    .andExpect(flash().attribute("error", true))
+                    .andExpect(flash().attribute("result", true))
+                    .andExpect(flash().attribute("operation", "Division Response"))
+                    .andExpect(flash().attribute("response", "Undefined"));
         }
         catch (Exception e) {
             e.printStackTrace();
