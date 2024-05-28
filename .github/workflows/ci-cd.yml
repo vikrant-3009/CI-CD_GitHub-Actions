@@ -17,10 +17,10 @@ jobs:
           java-version: '17'
 
       - name: Unit Test
-        run: mvn test
+        run: cd app && mvn test
 
       - name: Build Project
-        run: mvn clean package
+        run: cd app && mvn clean package
 
       - name: Archive Build Artifact
         uses: actions/upload-artifact@v3
@@ -41,8 +41,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-         mvn clean verify sonar:sonar \
-          -Dsonar.projectKey=simple-calculator-1 \
+          cd app \
+          && mvn clean verify sonar:sonar \
+          -Dsonar.projectKey=simple-calculator \
           -Dsonar.sources=src/main/java \
           -Dsonar.tests=src/test/java \
           -Dsonar.java.binaries=target/classes \
@@ -54,7 +55,8 @@ jobs:
           JF_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
           JF_URL: ${{ secrets.ARTIFACTORY_URL }}
         run: |
-          curl -X PUT -u "$JF_USERNAME:$JF_PASSWORD" \
+          cd app \
+          && curl -X PUT -u "$JF_USERNAME:$JF_PASSWORD" \
           -T target/calculator-app.war "$JF_URL/java-app-1/dev/calculator-app.war"
 
   docker:
@@ -70,7 +72,8 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build \
+          cd app \
+          && docker build \
           --build-arg="ARTIFACTORY_USERNAME=${{ secrets.ARTIFACTORY_USERNAME }}" \
           --build-arg="ARTIFACTORY_PASSWORD=${{ secrets.ARTIFACTORY_PASSWORD }}" \
           --build-arg="ARTIFACTORY_URL=${{ secrets.ARTIFACTORY_URL }}" \
@@ -82,5 +85,6 @@ jobs:
 
       - name: Run the container
         run: |
-         docker run -d -p 9010:8080 --name calculator-app \
-         ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
+          docker stop calculator-app && docker rm calculator-app \
+          docker run -d -p 9010:8080 --name calculator-app \
+          ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
