@@ -19,11 +19,13 @@
             <form class="row g-3" id="calculator-form" method="get">
                 <div class="col-md-12">
                     <label for="a" class="col-form-label">Number 1</label>
-                    <input type="number" class="form-control" id="a" name="a" required>
+                    <input type="number" class="form-control" id="a" name="a" th:if="${result == null}" required>
+                    <input type="number" class="form-control" id="num1" name="a" th:if="${result}" th:value="${a}" readonly>
                 </div>
                 <div class="col-md-12">
                     <label for="b" class="col-form-label">Number 2</label>
-                    <input type="number" class="form-control" id="b" name="b" required>
+                    <input type="number" class="form-control" id="b" name="b" th:if="${result == null}" required>
+                    <input type="number" class="form-control" id="num2" name="b" th:if="${result}" th:value="${b}" readonly>
                 </div>
                 <div th:if="${result}">
                     <label for="b" class="col-form-label" th:text="${operation}"></label>

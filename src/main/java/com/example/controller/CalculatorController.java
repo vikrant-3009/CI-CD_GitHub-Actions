@@ -23,6 +23,8 @@ public class CalculatorController {
             RedirectAttributes redirectAttributes) {
 
         String additionResponse = calculatorService.getAddition(a, b);
+        redirectAttributes.addFlashAttribute("a", a);
+        redirectAttributes.addFlashAttribute("b", b);
         redirectAttributes.addFlashAttribute("result", true);
         redirectAttributes.addFlashAttribute("operation", "Addition Response");
         redirectAttributes.addFlashAttribute("response", additionResponse);
@@ -36,6 +38,8 @@ public class CalculatorController {
             RedirectAttributes redirectAttributes) {
 
         String subtractionResponse = calculatorService.getSubtraction(a, b);
+        redirectAttributes.addFlashAttribute("a", a);
+        redirectAttributes.addFlashAttribute("b", b);
         redirectAttributes.addFlashAttribute("result", true);
         redirectAttributes.addFlashAttribute("operation", "Subtraction Response");
         redirectAttributes.addFlashAttribute("response", subtractionResponse);
@@ -49,6 +53,8 @@ public class CalculatorController {
             RedirectAttributes redirectAttributes) {
 
         String multiplicationResponse = calculatorService.getMultiplication(a, b);
+        redirectAttributes.addFlashAttribute("a", a);
+        redirectAttributes.addFlashAttribute("b", b);
         redirectAttributes.addFlashAttribute("result", true);
         redirectAttributes.addFlashAttribute("operation", "Multiplication Response");
         redirectAttributes.addFlashAttribute("response", multiplicationResponse);
@@ -70,6 +76,8 @@ public class CalculatorController {
         else {
             divisionResponse = calculatorService.getDivision(a, b);
         }
+        redirectAttributes.addFlashAttribute("a", a);
+        redirectAttributes.addFlashAttribute("b", b);
         redirectAttributes.addFlashAttribute("result", true);
         redirectAttributes.addFlashAttribute("operation", "Division Response");
         redirectAttributes.addFlashAttribute("response", divisionResponse);
