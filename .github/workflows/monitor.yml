@@ -15,7 +15,7 @@ jobs:
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:21 \
           && docker stop calculator-app && docker rm calculator-app \
           && docker run -d -p 9010:8080 --name calculator-app \
-          ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:21
+          ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:24
 
       - name: setup dockprom
         env:
