@@ -57,9 +57,13 @@
             const a = document.getElementById('a').value;
             const b = document.getElementById('b').value;
 
-            if (a != "" and b != "") {
+            if (a !== "" && b !== "") {
+                console.log("a");
                 form.action = `/calc/${action}?a=${a}&b=${b}`;
                 form.submit();
+            }
+            else {
+                console.log("b")
             }
         }
 
