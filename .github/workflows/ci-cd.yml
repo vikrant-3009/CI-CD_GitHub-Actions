@@ -86,5 +86,5 @@ jobs:
       - name: Run the container
         run: |
           docker stop calculator-app && docker rm calculator-app \
-          docker run -d -p 9010:8080 --name calculator-app \
+          && docker run -d -p 9010:8080 --name calculator-app \
           ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
