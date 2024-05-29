@@ -17,10 +17,10 @@ jobs:
           java-version: '17'
 
       - name: Unit Test
-        run: cd app && mvn test
+        run: cd mvcapp && mvn test
 
       - name: Build Project
-        run: cd app && mvn clean package
+        run: cd mvcapp && mvn clean package
 
       - name: Archive Build Artifact
         uses: actions/upload-artifact@v3
@@ -41,7 +41,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          cd app \
+          cd mvcapp \
           && mvn clean verify sonar:sonar \
           -Dsonar.projectKey=demo-calculator \
           -Dsonar.sources=src/main/java \
@@ -55,7 +55,7 @@ jobs:
           JF_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
           JF_URL: ${{ secrets.ARTIFACTORY_URL }}
         run: |
-          cd app \
+          cd mvcapp \
           && curl -X PUT -u "$JF_USERNAME:$JF_PASSWORD" \
           -T target/calculator-app.war "$JF_URL/java-app-1/dev/calculator-app.war"
 
@@ -72,7 +72,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          cd app \
+          cd mvcapp \
           && docker build \
           --build-arg="ARTIFACTORY_USERNAME=${{ secrets.ARTIFACTORY_USERNAME }}" \
           --build-arg="ARTIFACTORY_PASSWORD=${{ secrets.ARTIFACTORY_PASSWORD }}" \

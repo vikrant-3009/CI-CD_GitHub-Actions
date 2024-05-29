@@ -14,7 +14,7 @@
     <artifactId>calculator-app</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <description>Simple Calculator Application using Spring Boot</description>
+    <description>Simple Calculator Application using Spring</description>
 
     <modules>
         <module>mvcapp</module>
