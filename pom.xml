@@ -17,7 +17,7 @@
     <description>Simple Calculator Application using Spring Boot</description>
 
     <modules>
-        <module>app</module>
+        <module>mvcapp</module>
         <module>selenium-testing</module>
     </modules>
 

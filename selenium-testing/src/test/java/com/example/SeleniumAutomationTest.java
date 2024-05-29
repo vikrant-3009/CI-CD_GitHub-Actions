@@ -16,11 +16,11 @@ public class SeleniumAutomationTest {
 
     @BeforeEach
     public void setUp() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\vikrantkatoch\\chromedriver-win64\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         driver = new ChromeDriver(options);
-        driver.get("http://192.168.56.104:9010/");
+        driver.get("http://192.168.56.104:9010/mvcapp/calculate");
     }
 
     @AfterEach
@@ -32,52 +32,57 @@ public class SeleniumAutomationTest {
 
     @Test
     public void testAddition() {
-        driver.findElement(By.id("a")).sendKeys("12");
-        driver.findElement(By.id("b")).sendKeys("3");
-        driver.findElement(By.id("btn-addition")).click();
-        String result = driver.findElement(By.id("result")).getAttribute("value");
+        driver.findElement(By.id("num1")).sendKeys("12");
+        driver.findElement(By.id("num2")).sendKeys("3");
+        driver.findElement(By.id("operation")).sendKeys("add");
+        driver.findElement(By.id("submit-btn")).click();
+        String result = driver.findElement(By.id("result")).getText();
 
-        assertEquals("15.000", result);
+        assertEquals("15.0", result);
     }
 
     @Test
     public void testSubtraction() {
-        driver.findElement(By.id("a")).sendKeys("12");
-        driver.findElement(By.id("b")).sendKeys("3");
-        driver.findElement(By.id("btn-subtraction")).click();
-        String result = driver.findElement(By.id("result")).getAttribute("value");
+        driver.findElement(By.id("num1")).sendKeys("12");
+        driver.findElement(By.id("num2")).sendKeys("3");
+        driver.findElement(By.id("operation")).sendKeys("subtract");
+        driver.findElement(By.id("submit-btn")).click();
+        String result = driver.findElement(By.id("result")).getText();
 
-        assertEquals("9.000", result);
+        assertEquals("9.0", result);
     }
 
     @Test
     public void testMultiplication() {
-        driver.findElement(By.id("a")).sendKeys("12");
-        driver.findElement(By.id("b")).sendKeys("3");
-        driver.findElement(By.id("btn-multiplication")).click();
-        String result = driver.findElement(By.id("result")).getAttribute("value");
+        driver.findElement(By.id("num1")).sendKeys("12");
+        driver.findElement(By.id("num2")).sendKeys("3");
+        driver.findElement(By.id("operation")).sendKeys("multiply");
+        driver.findElement(By.id("submit-btn")).click();
+        String result = driver.findElement(By.id("result")).getText();
 
-        assertEquals("36.000", result);
+        assertEquals("36.0", result);
     }
 
     @Test
     public void testDivision() {
-        driver.findElement(By.id("a")).sendKeys("12");
-        driver.findElement(By.id("b")).sendKeys("3");
-        driver.findElement(By.id("btn-division")).click();
-        String result = driver.findElement(By.id("result")).getAttribute("value");
+        driver.findElement(By.id("num1")).sendKeys("12");
+        driver.findElement(By.id("num2")).sendKeys("3");
+        driver.findElement(By.id("operation")).sendKeys("division");
+        driver.findElement(By.id("submit-btn")).click();
+        String result = driver.findElement(By.id("result")).getText();
 
-        assertEquals("4.000", result);
+        assertEquals("4.0", result);
     }
 
     @Test
     public void testDivision_DivideByZero() {
-        driver.findElement(By.id("a")).sendKeys("12");
-        driver.findElement(By.id("b")).sendKeys("0");
-        driver.findElement(By.id("btn-division")).click();
-        String result = driver.findElement(By.id("result")).getAttribute("value");
+        driver.findElement(By.id("num1")).sendKeys("12");
+        driver.findElement(By.id("num2")).sendKeys("0");
+        driver.findElement(By.id("operation")).sendKeys("division");
+        driver.findElement(By.id("submit-btn")).click();
+        String result = driver.findElement(By.id("error")).getText();
 
-        assertEquals("Undefined", result);
+        assertEquals("Cannot divide by zero", result);
     }
 
 }
