@@ -35,7 +35,7 @@ jobs:
       - name: Run the container
         if: steps.build.outcome == 'success'
         run: |
-          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker stop calculator-app \
-          && docker ps -q -a --filter name="^calculator-app$" | xargs -r docker rm calculator-app \
-          && docker run -d -p 9010:8080 --name calculator-app \
+          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker stop calculator-app
+          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker rm calculator-app
+          docker run -d -p 9010:8080 --name calculator-app \
           ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
