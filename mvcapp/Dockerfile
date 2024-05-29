@@ -1,4 +1,4 @@
-FROM tomcat:jre17-temurin-jammy
+FROM tomcat:8.5-jdk17-corretto
 
 ARG ARTIFACTORY_USERNAME
 ARG ARTIFACTORY_PASSWORD
