@@ -1,0 +1,17 @@
+name: Selenium workflow
+
+on: workflow_dispatch
+
+jobs:
+  selenium:
+    name: selenium-automation-test
+    runs-on: centos-2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run Test
+        run: |
+          pwd
+          cd selenium-testing
+          mvn test
