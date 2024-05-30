@@ -90,8 +90,8 @@ jobs:
         id: pre-run
         if: steps.build.outcome == 'success'
         run: |
-          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker stop calculator-app
-          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker rm calculator-app
+          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker stop calculator-app || true
+          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker rm calculator-app || true
 
       - name: Run the container
         if: steps.pre-run.outcome == 'success'
