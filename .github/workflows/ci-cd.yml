@@ -86,11 +86,16 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
 
-      - name: Run the container
+      - name: Pre Docker Run
+        id: pre-run
         if: steps.build.outcome == 'success'
         run: |
           docker ps -q -a --filter name="^calculator-app$" | xargs -r docker stop calculator-app
           docker ps -q -a --filter name="^calculator-app$" | xargs -r docker rm calculator-app
+
+      - name: Run the container
+        if: steps.pre-run.outcome == 'success'
+        run: |
           docker run -d -p 9010:8080 --name calculator-app \
           ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
 
