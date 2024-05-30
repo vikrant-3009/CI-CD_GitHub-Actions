@@ -12,7 +12,8 @@ jobs:
 
       - name: Run Test
         run: |
-          pwd
+          echo $PATH
+          echo M2_HOME
           cd selenium-testing
           pwd
           mvn --version
