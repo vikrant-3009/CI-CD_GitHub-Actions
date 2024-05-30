@@ -12,9 +12,8 @@ jobs:
 
       - name: Run Test
         run: |
-          echo $PATH
-          echo M2_HOME
-          cd selenium-testing
-          pwd
+          export JAVA_HOME=/opt/jdk-17.0.2/
+          export M2_HOME=/opt/apache-maven-3.9.6/
+          export PATH=$PATH:$M2_HOME/bin
           mvn --version
-          mvn test
+          mvn -f selenium-testing/pom.xml test
