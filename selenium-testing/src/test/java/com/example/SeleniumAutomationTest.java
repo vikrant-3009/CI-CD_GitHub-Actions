@@ -16,9 +16,11 @@ public class SeleniumAutomationTest {
 
     @BeforeEach
     public void setUp() {
-        System.setProperty("webdriver.chrome.driver", "");
+        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
+        options.addArguments("--headless=new");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
         driver = new ChromeDriver(options);
         driver.get("http://192.168.56.104:9010/mvcapp/calculate");
     }

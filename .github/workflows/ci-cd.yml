@@ -41,8 +41,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          cd mvcapp \
-          && mvn clean verify sonar:sonar \
+          cd mvcapp
+          mvn clean verify sonar:sonar \
           -Dsonar.projectKey=calculator-mvc \
           -Dsonar.sources=src/main/java \
           -Dsonar.tests=src/test/java \
@@ -55,8 +55,8 @@ jobs:
           JF_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
           JF_URL: ${{ secrets.ARTIFACTORY_URL }}
         run: |
-          cd mvcapp \
-          && curl -X PUT -u "$JF_USERNAME:$JF_PASSWORD" \
+          cd mvcapp
+          curl -X PUT -u "$JF_USERNAME:$JF_PASSWORD" \
           -T target/mvcapp.war "$JF_URL/calculator-app/dev/mvcapp.war"
 
   docker:
@@ -72,21 +72,37 @@ jobs:
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker Image
+        id: build
         run: |
-          cd mvcapp \
-          && docker build \
+          cd mvcapp
+          docker build \
           --build-arg="ARTIFACTORY_USERNAME=${{ secrets.ARTIFACTORY_USERNAME }}" \
           --build-arg="ARTIFACTORY_PASSWORD=${{ secrets.ARTIFACTORY_PASSWORD }}" \
           --build-arg="ARTIFACTORY_URL=${{ secrets.ARTIFACTORY_URL }}" \
           -t ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }} .
 
       - name: Push Image to DockerHub
+        if: steps.build.outcome == 'success'
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
 
       - name: Run the container
+        if: steps.build.outcome == 'success'
         run: |
-          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker stop calculator-app \
-          && docker ps -q -a --filter name="^calculator-app$" | xargs -r docker rm calculator-app \
-          && docker run -d -p 9010:8080 --name calculator-app \
+          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker stop calculator-app
+          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker rm calculator-app
+          docker run -d -p 9010:8080 --name calculator-app \
           ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
+
+  selenium:
+    name: selenium-automation-test
+    runs-on: centos-2
+    needs: docker
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run Test
+        run: |
+          cd selenium-testing
+          mvn test
