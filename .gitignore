@@ -1,7 +1,5 @@
 HELP.md
 target
-mvcapp/target
-selenium-testing/target
 !**/src/main/**/target/
 !**/src/test/**/target/
 
