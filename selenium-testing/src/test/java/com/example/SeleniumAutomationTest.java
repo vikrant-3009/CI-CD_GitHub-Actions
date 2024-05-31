@@ -26,8 +26,9 @@ public class SeleniumAutomationTest {
         options.addArguments("--headless=new");
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
+        options.setBinary("/usr/bin/google-chrome");
         driver = new ChromeDriver(options);
-        //        driver.get("http://localhost:8181/mvcapp/calculate");
+//        driver.get("http://localhost:8181/mvcapp/calculate");
         driver.get(baseUrl);
     }
 

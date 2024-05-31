@@ -17,16 +17,16 @@ jobs:
           java-version: '17'
 
       - name: Unit Test
-        run: cd mvcapp && mvn test
+        run: mvn -f mvcapp/pom.xml test
 
       - name: Build Project
-        run: cd mvcapp && mvn clean package
+        run: mvn -f mvcapp/pom.xml clean package -Dmaven.test.failure.ignore=True
 
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
+      - name: Upload JUnit Test Results
+        uses: actions/upload-artifact@v3
         with:
-          files: mvcapp/target/surefire-reports/*.xml
+          name: JUnit Test Report
+          path: mvcapp/target/surefire-reports/TEST-*.xml
 
   sonar-and-artifactory:
     name: analyse-and-upload
