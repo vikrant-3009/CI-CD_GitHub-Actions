@@ -119,3 +119,25 @@ jobs:
         with:
           name: Selenium Test Report
           path: selenium-testing/target/surefire-reports/emailable-report.html
+
+  jmeter:
+    name: jmeter-performance-test
+    runs-on: centos-1
+    needs: docker
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run Test
+        run: |
+          export JMETER_HOME=/opt/apache-jmeter-5.6.3/
+          export PATH=$PATH:$JMETER_HOME/bin
+          jmeter -n -t "jmeter-testing/src/test/jmeter/Calculator.jmx" \
+          -l "jmeter-testing/target/jmeter/results/Calculator.log" -e -o "jmeter-testing/target/jmeter/results/report" \
+          -Jhostname=192.168.56.104 -Jport=9010 -Jcontext=/mvcapp/calculate
+
+      - name: Upload JMeter Performance Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: JMeter Performance Test Report
+          path: jmeter-testing/target/jmeter/results/report

@@ -19,9 +19,9 @@
       </ThreadGroup>
       <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP_PostRequest_Subtraction">
-          <stringProp name="HTTPSampler.domain">192.168.56.104</stringProp>
-          <stringProp name="HTTPSampler.port">9010</stringProp>
-          <stringProp name="HTTPSampler.path">/mvcapp/calculate</stringProp>
+          <stringProp name="HTTPSampler.domain">${hostname}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.path">${context}</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -54,9 +54,9 @@
         </HTTPSamplerProxy>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP_PostRequest_Multiplication">
-          <stringProp name="HTTPSampler.domain">192.168.56.104</stringProp>
-          <stringProp name="HTTPSampler.port">9010</stringProp>
-          <stringProp name="HTTPSampler.path">/mvcapp/calculate</stringProp>
+          <stringProp name="HTTPSampler.domain">${hostname}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.path">${context}</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -89,9 +89,9 @@
         </HTTPSamplerProxy>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP_PostRequest_Division">
-          <stringProp name="HTTPSampler.domain">192.168.56.104</stringProp>
-          <stringProp name="HTTPSampler.port">9010</stringProp>
-          <stringProp name="HTTPSampler.path">/mvcapp/calculate</stringProp>
+          <stringProp name="HTTPSampler.domain">${hostname}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.path">${context}</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -124,9 +124,9 @@
         </HTTPSamplerProxy>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP_PostRequest_DivisionByZero">
-          <stringProp name="HTTPSampler.domain">192.168.56.104</stringProp>
-          <stringProp name="HTTPSampler.port">9010</stringProp>
-          <stringProp name="HTTPSampler.path">/mvcapp/calculate</stringProp>
+          <stringProp name="HTTPSampler.domain">${hostname}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.path">${context}</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -159,9 +159,9 @@
         </HTTPSamplerProxy>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP_PostRequest_Addition">
-          <stringProp name="HTTPSampler.domain">192.168.56.104</stringProp>
-          <stringProp name="HTTPSampler.port">9010</stringProp>
-          <stringProp name="HTTPSampler.path">/mvcapp/calculate</stringProp>
+          <stringProp name="HTTPSampler.domain">${hostname}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.path">${context}</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -193,7 +193,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
@@ -305,6 +305,26 @@
         </ResultCollector>
         <hashTree/>
       </hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="hostname" elementType="Argument">
+            <stringProp name="Argument.name">hostname</stringProp>
+            <stringProp name="Argument.value">192.168.56.104</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="port" elementType="Argument">
+            <stringProp name="Argument.name">port</stringProp>
+            <stringProp name="Argument.value">9010</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="context" elementType="Argument">
+            <stringProp name="Argument.name">context</stringProp>
+            <stringProp name="Argument.value">/mvcapp/calculate</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
     </hashTree>
   </hashTree>
 </jmeterTestPlan>
