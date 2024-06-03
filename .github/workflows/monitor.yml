@@ -12,10 +12,10 @@ jobs:
 
       - name: Pull and Run Docker Image
         run: |
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:38
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:39
           docker ps -q -a --filter name="^calculator-app$" | xargs -r docker stop calculator-app || true
           docker ps -q -a --filter name="^calculator-app$" | xargs -r docker rm calculator-app || true
-          docker run -d -p 9010:8080 --name calculator-app ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:38
+          docker run -d -p 9010:8080 --name calculator-app ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:39
 
       - name: setup dockprom
         env:
