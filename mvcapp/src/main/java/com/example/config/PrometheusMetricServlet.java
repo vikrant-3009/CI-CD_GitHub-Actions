@@ -11,20 +11,20 @@ import io.micrometer.core.instrument.binder.system.UptimeMetrics;
 import io.micrometer.prometheus.PrometheusConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 
+@WebServlet("/metrics")
 public class PrometheusMetricServlet extends HttpServlet {
 
     private static final PrometheusMeterRegistry registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
 
-    @Override
     public void init() {
         new JvmThreadMetrics().bindTo(registry);
         new JvmGcMetrics().bindTo(registry);
@@ -37,17 +37,14 @@ public class PrometheusMetricServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType(TextFormat.CONTENT_TYPE_004);
 
-        Writer writer = resp.getWriter();
-        try {
+        try (Writer writer = resp.getWriter()) {
             registry.scrape(writer);
             writer.flush();
         }
-        finally {
-            writer.close();
-        }
     }
+
 }
