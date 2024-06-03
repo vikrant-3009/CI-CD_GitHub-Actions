@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         id="WebApp_ID" version="3.0">
   <display-name>mvcapp</display-name>
 
-  <!-- Add Spring MVC DispatcherServlet as front controller -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/applicationContext.xml</param-value>
+  </context-param>
+
+  <!-- Spring MVC DispatcherServlet as front controller -->
   <servlet>
     <servlet-name>spring</servlet-name>
     <servlet-class>
@@ -14,10 +22,19 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-
   <servlet-mapping>
     <servlet-name>spring</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 
+  <!-- metrics endpoint for prometheus -->
+  <servlet>
+    <servlet-name>prometheusMetrics</servlet-name>
+    <servlet-class>com.example.config.PrometheusMetricServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>prometheusMetrics</servlet-name>
+    <url-pattern>/metrics</url-pattern>
+  </servlet-mapping>
 </web-app>
