@@ -9,8 +9,6 @@
     <!-- DispatcherServlet Context: defines this servlet's request-processing
         infrastructure -->
 
-    <mvc:default-servlet-handler/>
-
     <!-- Enables the Spring MVC @Controller programming model -->
     <mvc:annotation-driven />
     <context:component-scan base-package="com.example" />
