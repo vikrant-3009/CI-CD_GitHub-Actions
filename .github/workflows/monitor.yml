@@ -12,10 +12,10 @@ jobs:
 
       - name: Pull and Run Docker Image
         run: |
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:21 \
-          && docker stop calculator-app && docker rm calculator-app \
-          && docker run -d -p 9010:8080 --name calculator-app \
-          ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:24
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:38
+          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker stop calculator-app || true
+          docker ps -q -a --filter name="^calculator-app$" | xargs -r docker rm calculator-app || true
+          docker run -d -p 9010:8080 --name calculator-app ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:38
 
       - name: setup dockprom
         env:
@@ -23,6 +23,6 @@ jobs:
           CADDY_PASSWORD: ${{ secrets.CADDY_PASSWORD }}
           CADDY_PASSWORD_HASH: ${{ secrets.CADDY_PASSWORD_HASH }}
         run: |
-          git clone ${{ vars.DOCKPROM_REPO_URL }} && cd dockprom \
-          && ADMIN_USER='$CADDY_USER' ADMIN_PASSWORD='$CADDY_PASSWORD' ADMIN_PASSWORD_HASH='$CADDY_PASSWORD_HASH' \
-          && docker compose up -d
+          git clone ${{ vars.DOCKPROM_REPO_URL }} && cd dockprom
+          ADMIN_USER='$CADDY_USER' ADMIN_PASSWORD='$CADDY_PASSWORD' ADMIN_PASSWORD_HASH='$CADDY_PASSWORD_HASH'
+          docker compose up -d
