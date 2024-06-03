@@ -42,7 +42,7 @@ public class PrometheusMetricServlet extends HttpServlet {
     }
 
     @RequestMapping(value = "/metrics")
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType(TextFormat.CONTENT_TYPE_004);
 
