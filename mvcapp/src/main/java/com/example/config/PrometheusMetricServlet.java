@@ -12,24 +12,21 @@ import io.micrometer.prometheus.PrometheusConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
 
-import javax.annotation.PostConstruct;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 
-@Controller
+@WebServlet("/metrics")
 public class PrometheusMetricServlet extends HttpServlet {
 
     private static final PrometheusMeterRegistry registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
 
-    @PostConstruct
+    @SuppressWarnings("resource")
     public void init() {
         new JvmThreadMetrics().bindTo(registry);
         new JvmGcMetrics().bindTo(registry);
@@ -41,7 +38,7 @@ public class PrometheusMetricServlet extends HttpServlet {
         new ClassLoaderMetrics().bindTo(registry);
     }
 
-    @RequestMapping(value = "/metrics")
+    @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType(TextFormat.CONTENT_TYPE_004);
