@@ -5,6 +5,17 @@
          id="WebApp_ID" version="3.0">
   <display-name>mvcapp</display-name>
 
+  <!-- metrics endpoint for prometheus -->
+  <servlet>
+    <servlet-name>prometheusMetrics</servlet-name>
+    <servlet-class>com.example.config.PrometheusMetricServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>prometheusMetrics</servlet-name>
+    <url-pattern>/metrics</url-pattern>
+  </servlet-mapping>
+
   <!-- Spring MVC DispatcherServlet as front controller -->
   <servlet>
     <servlet-name>spring</servlet-name>
@@ -22,14 +33,4 @@
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 
-  <!-- metrics endpoint for prometheus -->
-  <servlet>
-    <servlet-name>prometheusMetrics</servlet-name>
-    <servlet-class>com.example.config.PrometheusMetricServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>prometheusMetrics</servlet-name>
-    <url-pattern>/metrics</url-pattern>
-  </servlet-mapping>
 </web-app>
