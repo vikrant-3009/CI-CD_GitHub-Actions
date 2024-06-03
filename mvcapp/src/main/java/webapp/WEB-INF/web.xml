@@ -8,7 +8,8 @@
   <!-- metrics endpoint for prometheus -->
   <servlet>
     <servlet-name>prometheusMetrics</servlet-name>
-    <servlet-class>com.example.config.PrometheusMetricServlet</servlet-class>
+    <!-- <servlet-class>com.example.config.PrometheusMetricServlet</servlet-class> -->
+    <servlet-class>io.prometheus.client.exporter.MetricsServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>prometheusMetrics</servlet-name>
