@@ -98,6 +98,24 @@ jobs:
           docker run -d -p 9010:8080 --name calculator-app \
           ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
 
+    monitor:
+      name: monitoring-using-dockprom
+      runs-on: centos-2
+      needs: docker
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: setup dockprom
+          env:
+            CADDY_USER: ${{ secrets.CADDY_USER }}
+            CADDY_PASSWORD: ${{ secrets.CADDY_PASSWORD }}
+            CADDY_PASSWORD_HASH: ${{ secrets.CADDY_PASSWORD_HASH }}
+          run: |
+            git clone ${{ vars.DOCKPROM_REPO_URL }} && cd dockprom
+            ADMIN_USER='$CADDY_USER' ADMIN_PASSWORD='$CADDY_PASSWORD' ADMIN_PASSWORD_HASH='$CADDY_PASSWORD_HASH'
+            docker compose up -d
+
   selenium:
     name: selenium-automation-test
     runs-on: centos-2
