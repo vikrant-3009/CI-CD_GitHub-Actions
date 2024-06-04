@@ -66,9 +66,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jmeterResultsFile>target/jmeter/results/Calculator.log</jmeterResultsFile>
-                    <resultsDirectory>target/jmeter/results</resultsDirectory>
-                    <reportDirectory>target/jmeter/results/report</reportDirectory>
+                    <generateReports>true</generateReports>
                     <propertiesUser>
                         <hostname>${hostname}</hostname>
                         <port>${port}</port>

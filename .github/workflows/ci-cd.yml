@@ -151,12 +151,11 @@ jobs:
           export JMETER_HOME=/opt/apache-jmeter-5.6.3/
           export PATH=$PATH:$JMETER_HOME/bin
           mkdir -p jmeter-testing/target/jmeter/results/report
-          jmeter -n -t "jmeter-testing/src/test/jmeter/Calculator.jmx" \
-          -l "jmeter-testing/target/jmeter/results/Calculator.log" -e -o "jmeter-testing/target/jmeter/results/report" \
-          -Jhostname=192.168.56.104 -Jport=9010 -Jcontext=/mvcapp/calculate
+          mvn -f jmeter-testing/pom.xml clean verify \
+          -Dhostname=192.168.56.101 -Dport=9010 -Dcontext=/mvcapp/calculate
 
       - name: Upload JMeter Performance Test Report
         uses: actions/upload-artifact@v3
         with:
           name: JMeter Performance Test Report
-          path: jmeter-testing/target/jmeter/results/report
+          path: jmeter-testing/target/jmeter/reports/Calculator
