@@ -92,7 +92,7 @@ jobs:
           -t ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }} .
 
   docker-push:
-    name: Docker Image Creation
+    name: Docker Image Push
     runs-on: centos-1
     needs: docker-image
     steps:
