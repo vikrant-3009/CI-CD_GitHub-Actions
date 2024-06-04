@@ -3,34 +3,37 @@ name: CI-CD workflow
 on: workflow_dispatch
 
 jobs:
-  maven:
-    name: Maven Build
-    runs-on: ubuntu-latest
+  junit:
+    name: Unit Test
+    runs-on: centos-1
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK-17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+        uses: actions/checkout@v3
 
       - name: Unit Test
         run: mvn -f mvcapp/pom.xml test
-
-      - name: Build Project
-        run: mvn -f mvcapp/pom.xml clean package -Dmaven.test.failure.ignore=True
 
       - name: Upload JUnit Test Results
         uses: actions/upload-artifact@v3
         with:
           name: JUnit Test Report
           path: mvcapp/target/surefire-reports/TEST-*.xml
-
-  sonar-and-artifactory:
-    name: analyse-and-upload
+  
+  maven:
+    name: Build
     runs-on: centos-1
+    needs: junit
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Build Project
+        run: mvn -f mvcapp/pom.xml clean package -Dmaven.test.failure.ignore=True
+
+  sonar:
+    name: Sonar Analysis
+    runs-on: centos-1
+    needs: maven
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -48,20 +51,28 @@ jobs:
           -Dsonar.java.binaries=target/classes \
           -Dsonar.coverage.jacoco.xmlReportPaths=**/jacoco.xml
 
+  artifactory:
+    name: Upload to Artifactory
+    runs-on: centos-1
+    needs: sonar
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Upload to Artifactory
         env:
           JF_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
           JF_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
           JF_URL: ${{ secrets.ARTIFACTORY_URL }}
         run: |
-          cd mvcapp
+          mvn -f mvcapp/pom.xml package
           curl -X PUT -u "$JF_USERNAME:$JF_PASSWORD" \
-          -T target/mvcapp.war "$JF_URL/calculator-app/dev/mvcapp.war"
+          -T mvcapp/target/mvcapp.war "$JF_URL/calculator-app/dev/mvcapp.war"
 
-  docker:
-    name: docker-build-and-deploy
-    runs-on: centos-2
-    needs: sonar-and-artifactory
+  docker-image:
+    name: Docker Image Creation
+    runs-on: centos-1
+    needs: artifactory
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -80,28 +91,40 @@ jobs:
           --build-arg="ARTIFACTORY_URL=${{ secrets.ARTIFACTORY_URL }}" \
           -t ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }} .
 
+  docker-push:
+    name: Docker Image Creation
+    runs-on: centos-1
+    needs: docker-image
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
       - name: Push Image to DockerHub
-        if: steps.build.outcome == 'success'
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
 
+  docker-run:
+    name: Docker Image Deployment
+    runs-on: centos-1
+    needs: docker-push
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Pre Docker Run
-        id: pre-run
-        if: steps.build.outcome == 'success'
         run: |
           docker ps -q -a --filter name="^calculator-app$" | xargs -r docker stop calculator-app || true
           docker ps -q -a --filter name="^calculator-app$" | xargs -r docker rm calculator-app || true
 
       - name: Run the container
-        if: steps.pre-run.outcome == 'success'
         run: |
           docker run -d -p 9010:8080 --name calculator-app \
           ${{ secrets.DOCKERHUB_USERNAME }}/demo-calculator:${{ github.run_number }}
 
   monitor:
-    name: monitoring-using-dockprom
-    runs-on: centos-2
-    needs: docker
+    name: Monitoring Using Dockprom
+    runs-on: centos-1
+    needs: docker-run
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -118,8 +141,8 @@ jobs:
 
   selenium:
     name: selenium-automation-test
-    runs-on: centos-2
-    needs: docker
+    runs-on: centos-1
+    needs: monitor
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -141,7 +164,7 @@ jobs:
   jmeter:
     name: jmeter-performance-test
     runs-on: centos-1
-    needs: docker
+    needs: selenium
     steps:
       - name: Checkout
         uses: actions/checkout@v3
