@@ -153,7 +153,7 @@ jobs:
           export M2_HOME=/opt/apache-maven-3.9.6/
           export PATH=$PATH:$M2_HOME/bin
           mvn -f selenium-testing/pom.xml test -Dmaven.test.failure.ignore=true \
-          -Dhostname=192.168.56.104 -Dport=9010 -Dcontext=/mvcapp/calculate
+          -Dhostname=192.168.56.101 -Dport=9010 -Dcontext=/mvcapp/calculate
 
       - name: Upload Selenium Test Report
         uses: actions/upload-artifact@v3

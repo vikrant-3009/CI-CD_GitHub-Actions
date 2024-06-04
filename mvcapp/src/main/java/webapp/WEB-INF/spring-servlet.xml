@@ -10,7 +10,6 @@
         infrastructure -->
 
     <!-- Enables the Spring MVC @Controller programming model -->
-    <mvc:annotation-driven />
     <context:component-scan base-package="com.example" />
 
     <!-- Resolves views selected for rendering by @Controllers to .jsp resources
