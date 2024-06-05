@@ -6,12 +6,9 @@ jobs:
     selenium:
         name: Selenium Test
         runs-on: centos-2
-        permissions:
-            pages: write
-            id-token: write
-        environment:
-            name: github-pages
-            url: ${{ steps.deployment.outputs.page_url }}
+        # permissions:
+        #     pages: write
+        #     id-token: write
         steps:
             - name: Checkout
               uses: actions/checkout@v3
@@ -23,6 +20,7 @@ jobs:
                 export PATH=$PATH:$M2_HOME/bin
                 mvn -f selenium-testing/pom.xml test -Dmaven.test.failure.ignore=true \
                 -Dhostname=192.168.56.104 -Dport=9010 -Dcontext=/mvcapp/calculate
+                cp target/surefire-reports/emailable-report.html target/deploy-reports/
       
             - name: Upload Selenium Test Report
               uses: actions/upload-artifact@v3
@@ -35,8 +33,14 @@ jobs:
             #   with:
             #     path: selenium-testing/target/surefire-reports/emailable-report.html
 
-            - name: Deploy to GitHub Pages
-              id: deployment
-              uses: actions/deploy-pages@v2
+            # - name: Deploy to GitHub Pages
+            #   id: deployment
+            #   uses: actions/deploy-pages@v2
+            #   with:
+            #     artifact_name: "Selenium Test Report"
+
+            - name: Deploy Report
+              uses: JamesIves/github-pages-deploy-action@v4
               with:
-                artifact_name: "Selenium Test Report"
+                folder: target/deploy-reports
+                branch: 'selenium-report'
