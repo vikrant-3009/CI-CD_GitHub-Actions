@@ -20,9 +20,9 @@ jobs:
           path: mvcapp/target/surefire-reports/TEST-*.xml
 
       - name: Test Summary
-        uses: test-summary/action@v2
+        uses: test-summary/action@v1
         with:
-          paths: "test/results/**/TEST-*.xml"
+          paths: "mvcapp/target/surefire-reports/TEST-*.xml"
           output: test-summary.md
         if: always()
         
