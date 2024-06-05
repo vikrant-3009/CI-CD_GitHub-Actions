@@ -2,16 +2,16 @@ name: Selenium Workflow
 
 on: workflow_dispatch
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 jobs:
     selenium:
         name: Selenium Test
         runs-on: centos-2
+        permissions:
+            pages: write
+            id-token: write
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
         steps:
             - name: Checkout
               uses: actions/checkout@v3
@@ -30,12 +30,13 @@ jobs:
                 name: Selenium Test Report
                 path: selenium-testing/target/surefire-reports/emailable-report.html
             
-            - name: Upload pages artifact
-              uses: actions/upload-pages-artifact@v3
-              with:
-                # Upload entire repository
-                path: selenium-testing/target/surefire-reports/emailable-report.html
+            # - name: Upload pages artifact
+            #   uses: actions/upload-pages-artifact@v3
+            #   with:
+            #     path: selenium-testing/target/surefire-reports/emailable-report.html
 
             - name: Deploy to GitHub Pages
               id: deployment
               uses: actions/deploy-pages@v2
+              with:
+                artifact_name: "Selenium Test Report"
