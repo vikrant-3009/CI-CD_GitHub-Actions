@@ -1,0 +1,34 @@
+name: JUnit Workflow
+
+on: workflow_dispatch
+
+jobs:
+  junit:
+    name: Unit Test
+    runs-on: centos-1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Unit Test
+        run: mvn -f mvcapp/pom.xml test
+
+      - name: Upload JUnit Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: JUnit Test Report
+          path: mvcapp/target/surefire-reports/TEST-*.xml
+
+      - name: Test Summary
+        uses: test-summary/action@v2
+        with:
+          paths: "test/results/**/TEST-*.xml"
+          output: test-summary.md
+        if: always()
+        
+      - name: Upload test summary
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-summary
+          path: test-summary.md
+        if: always()
