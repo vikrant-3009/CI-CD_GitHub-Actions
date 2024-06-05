@@ -14,12 +14,18 @@ jobs:
               uses: actions/checkout@v3
             
             - name: Run Test
+              id: run-test
               run: |
                 export JAVA_HOME=/opt/jdk-17.0.2/
                 export M2_HOME=/opt/apache-maven-3.9.6/
                 export PATH=$PATH:$M2_HOME/bin
                 mvn -f selenium-testing/pom.xml test -Dmaven.test.failure.ignore=true \
                 -Dhostname=192.168.56.104 -Dport=9010 -Dcontext=/mvcapp/calculate
+            
+            - name: Move Report to a new directory
+              if: steps.run-test.outcome == 'success'
+              run: |
+                mkdir -p target/deploy-reports
                 cp target/surefire-reports/emailable-report.html target/deploy-reports/
       
             - name: Upload Selenium Test Report
