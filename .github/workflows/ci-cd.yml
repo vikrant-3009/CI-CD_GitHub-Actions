@@ -156,24 +156,24 @@ jobs:
           mvn -f selenium-testing/pom.xml test -Dmaven.test.failure.ignore=true \
           -Dhostname=192.168.56.104 -Dport=9010 -Dcontext=/mvcapp/calculate
 
-      - name: Move Report to a new directory
+      - name: Move Selenium Test Report to a new directory
         if: steps.run-test.outcome == 'success'
         run: |
           mkdir -p selenium-testing/target/deploy-reports
-          cp selenium-testing/target/surefire-reports/emailable-report.html selenium-testing/target/deploy-reports/index.html
+          cp selenium-testing/target/surefire-reports/emailable-report.html selenium-testing/target/deploy-reports/selenium.html
 
       - name: Upload Selenium Test Report
         uses: actions/upload-artifact@v3
         with:
           name: Selenium Test Report
-          path: selenium-testing/target/deploy-reports/index.html
+          path: selenium-testing/target/deploy-reports/selenium.html
 
-      - name: Deploy Report
+      - name: Deploy Selenium Report to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
           folder: 'selenium-testing/target/deploy-reports'
-          branch: selenium-report
+          branch: gh-pages
 
   jmeter:
     name: jmeter-performance-test
@@ -196,3 +196,15 @@ jobs:
         with:
           name: JMeter Performance Test Report
           path: jmeter-testing/target/jmeter/reports/Calculator
+      
+      - name: Rename the index.html file of jmeter report
+        run: |
+          cd jmeter-testing/target/jmeter/reports/Calculator
+          mv index.html jmeter.html
+      
+      - name: Deploy JMeter Report to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
+          folder: 'jmeter-testing/target/jmeter/reports/Calculator'
+          branch: gh-pages
