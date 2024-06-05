@@ -42,5 +42,5 @@ jobs:
             - name: Deploy Report
               uses: JamesIves/github-pages-deploy-action@v4
               with:
-                folder: target/deploy-reports
                 branch: 'selenium-report'
+                folder: target/deploy-reports
