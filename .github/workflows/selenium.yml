@@ -25,8 +25,8 @@ jobs:
             - name: Move Report to a new directory
               if: steps.run-test.outcome == 'success'
               run: |
-                mkdir -p target/deploy-reports
-                cp target/surefire-reports/emailable-report.html target/deploy-reports/
+                mkdir -p selenium-testing/target/deploy-reports
+                cp selenium-testing/target/surefire-reports/emailable-report.html selenium-testing/target/deploy-reports/
       
             - name: Upload Selenium Test Report
               uses: actions/upload-artifact@v3
@@ -49,4 +49,4 @@ jobs:
               uses: JamesIves/github-pages-deploy-action@v4
               with:
                 branch: 'selenium-report'
-                folder: target/deploy-reports
+                folder: selenium-testing/target/deploy-reports
