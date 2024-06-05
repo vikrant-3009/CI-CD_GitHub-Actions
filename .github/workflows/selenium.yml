@@ -29,6 +29,12 @@ jobs:
               with:
                 name: Selenium Test Report
                 path: selenium-testing/target/surefire-reports/emailable-report.html
+            
+            - name: Upload pages artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                # Upload entire repository
+                path: selenium-testing/target/surefire-reports/emailable-report.html
 
             - name: Deploy to GitHub Pages
               id: deployment
