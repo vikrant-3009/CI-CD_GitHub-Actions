@@ -32,18 +32,7 @@ jobs:
               uses: actions/upload-artifact@v3
               with:
                 name: Selenium Test Report
-                path: selenium-testing/target/surefire-reports/emailable-report.html
-
-            - name: Selenium Report preview
-              id: html_preview
-              uses: pavi2410/html-preview-action@v2
-              with:
-                html_file: 'selenium-testing/target/surefire-reports/emailable-report.html'
-            
-            # - name: Upload pages artifact
-            #   uses: actions/upload-pages-artifact@v3
-            #   with:
-            #     path: selenium-testing/target/surefire-reports/emailable-report.html
+                path: selenium-testing/target/deploy-reports/emailable-report.html
 
             # - name: Deploy to GitHub Pages
             #   id: deployment
@@ -51,8 +40,9 @@ jobs:
             #   with:
             #     artifact_name: "Selenium Test Report"
 
-            # - name: Deploy Report
-            #   uses: JamesIves/github-pages-deploy-action@4.1.5
-            #   with:
-            #     branch: 'selenium-report'
-            #     folder: selenium-testing/target/deploy-reports
+            - name: Deploy Report
+              uses: JamesIves/github-pages-deploy-action@4.1.5
+              with:
+                token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
+                folder: 'selenium-testing/target/deploy-reports'
+                branch: selenium-report
