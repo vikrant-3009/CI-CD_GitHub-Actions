@@ -2,5 +2,5 @@
 Demo Calculator App for testing/working with GitHub Actions
 
 ## Test Reports
-- [Selenium Test Report](https://vikrant-3009.github.io/CalculatorApp/selenium.html/){:target="_blank"}
-- [JMeter Performance Test Report](https://vikrant-3009.github.io/CalculatorApp/jmeter.html/){:target="_blank"}
+- [Selenium Test Report](https://vikrant-3009.github.io/CalculatorApp/selenium.html){:target="_blank"}
+- [JMeter Performance Test Report](https://vikrant-3009.github.io/CalculatorApp/jmeter.html){:target="_blank"}
