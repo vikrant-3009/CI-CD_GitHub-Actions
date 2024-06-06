@@ -1,0 +1,98 @@
+name: Selenium Workflow
+
+on: workflow_dispatch
+
+jobs:
+    selenium:
+        name: Selenium Test
+        runs-on: centos-2
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            
+            - name: Run Test
+              id: run-test
+              run: |
+                export JAVA_HOME=/opt/jdk-17.0.2/
+                export M2_HOME=/opt/apache-maven-3.9.6/
+                export PATH=$PATH:$M2_HOME/bin
+                mvn -f selenium-testing/pom.xml test -Dmaven.test.failure.ignore=true \
+                -Dhostname=192.168.56.104 -Dport=9010 -Dcontext=/mvcapp/calculate
+            
+            - name: Move Report to a new directory
+              if: steps.run-test.outcome == 'success'
+              run: |
+                mkdir -p selenium-testing/target/deploy-reports
+                cp selenium-testing/target/surefire-reports/emailable-report.html selenium-testing/target/deploy-reports/selenium.html
+      
+            - name: Upload Selenium Test Report
+              uses: actions/upload-artifact@v3
+              with:
+                name: Selenium Test Report
+                path: selenium-testing/target/deploy-reports/selenium.html
+
+            # - name: Deploy Selenium Report to GitHub Pages
+            #   uses: JamesIves/github-pages-deploy-action@4.1.5
+            #   with:
+            #     token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
+            #     folder: 'selenium-testing/target/deploy-reports'
+            #     branch: gh-pages
+
+    jmeter:
+        name: JMeter Test
+        runs-on: centos-1
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            
+            - name: Run Test
+              run: |
+                export JMETER_HOME=/opt/apache-jmeter-5.6.3/
+                export PATH=$PATH:$JMETER_HOME/bin
+                mkdir -p jmeter-testing/target/jmeter/results/report
+                mvn -f jmeter-testing/pom.xml clean verify \
+                -Dhostname=192.168.56.104 -Dport=9010 -Dcontext=/mvcapp/calculate
+            
+            - name: Rename the index.html file of jmeter report
+              run: |
+                cd jmeter-testing/target/jmeter/reports/Calculator
+                mv index.html jmeter.html
+            
+            - name: Upload JMeter Performance Test Report
+              uses: actions/upload-artifact@v3
+              with:
+                name: JMeter Performance Test Report
+                path: jmeter-testing/target/jmeter/reports/Calculator
+            
+            # - name: Deploy JMeter Report to GitHub Pages
+            #   uses: JamesIves/github-pages-deploy-action@4.1.5
+            #   with:
+            #     token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
+            #     folder: 'jmeter-testing/target/jmeter/reports/Calculator'
+            #     branch: gh-pages
+
+    deploy-test-reports:
+        name: deploy-test-reports
+        runs-on: centos-2
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            
+            - name: Download Selenium Report
+              uses: actions/download-artifact@v3
+              with:
+                name: Selenium Test Report
+                path: test-reports
+            
+            - name: Download Selenium Report
+              uses: actions/download-artifact@v3
+              with:
+                name: JMeter Performance Test Report
+                path: test-reports
+            
+            - name: Deploy to GitHub Pages
+              uses: JamesIves/github-pages-deploy-action@4.1.5
+              with:
+                token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
+                folder: 'test-reports'
+                branch: gh-pages
