@@ -1,4 +1,4 @@
-name: Selenium Workflow
+name: Testing Workflow
 
 on: workflow_dispatch
 
