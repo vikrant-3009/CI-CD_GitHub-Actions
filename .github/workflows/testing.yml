@@ -74,6 +74,7 @@ jobs:
     deploy-test-reports:
         name: deploy-test-reports
         runs-on: centos-2
+        needs: [selenium, jmeter]
         steps:
             - name: Checkout
               uses: actions/checkout@v3
