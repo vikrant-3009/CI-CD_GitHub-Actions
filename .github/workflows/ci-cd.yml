@@ -184,16 +184,16 @@ jobs:
           mvn -f jmeter-testing/pom.xml clean verify \
           -Dhostname=192.168.56.104 -Dport=9010 -Dcontext=/mvcapp/calculate
 
+      - name: Rename the index.html file of jmeter report
+        run: |
+          cd jmeter-testing/target/jmeter/reports/Calculator
+          mv index.html jmeter.html
+
       - name: Upload JMeter Performance Test Report
         uses: actions/upload-artifact@v3
         with:
           name: JMeter Performance Test Report
           path: jmeter-testing/target/jmeter/reports/Calculator
-      
-      - name: Rename the index.html file of jmeter report
-        run: |
-          cd jmeter-testing/target/jmeter/reports/Calculator
-          mv index.html jmeter.html
 
   deploy-test-reports:
     name: deploy-test-reports
