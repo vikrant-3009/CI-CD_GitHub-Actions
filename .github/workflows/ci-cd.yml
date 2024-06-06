@@ -168,13 +168,6 @@ jobs:
           name: Selenium Test Report
           path: selenium-testing/target/deploy-reports/selenium.html
 
-      - name: Deploy Selenium Report to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.5
-        with:
-          token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
-          folder: 'selenium-testing/target/deploy-reports'
-          branch: gh-pages
-
   jmeter:
     name: jmeter-performance-test
     runs-on: centos-1
@@ -201,10 +194,30 @@ jobs:
         run: |
           cd jmeter-testing/target/jmeter/reports/Calculator
           mv index.html jmeter.html
-      
-      - name: Deploy JMeter Report to GitHub Pages
+
+  deploy-test-reports:
+    name: deploy-test-reports
+    runs-on: centos-2
+    needs: [selenium, jmeter]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+                
+      - name: Download Selenium Test Report
+        uses: actions/download-artifact@v3
+        with:
+          name: Selenium Test Report
+          path: test-reports
+                
+      - name: Download JMeter Test Report
+        uses: actions/download-artifact@v3
+        with:
+          name: JMeter Performance Test Report
+          path: test-reports
+                
+      - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           token: ${{ secrets.ACCESS_TOKEN_GITHUB }}
-          folder: 'jmeter-testing/target/jmeter/reports/Calculator'
+          folder: 'test-reports'
           branch: gh-pages

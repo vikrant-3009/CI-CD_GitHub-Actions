@@ -79,13 +79,13 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v3
             
-            - name: Download Selenium Report
+            - name: Download Selenium Test Report
               uses: actions/download-artifact@v3
               with:
                 name: Selenium Test Report
                 path: test-reports
             
-            - name: Download Selenium Report
+            - name: Download JMeter Test Report
               uses: actions/download-artifact@v3
               with:
                 name: JMeter Performance Test Report
