@@ -1,0 +1,142 @@
+name: CI Workflow
+on:
+  pull_request:
+    branches:
+    - master
+  push:
+    branches:
+    - master
+jobs:
+  junit:
+    name: JUnit Unit Test
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: temurin
+        cache: maven
+    - name: Unit Test
+      run: mvn -f my-app/pom.xml -Dmaven.test.failure.ignore=true test
+    - name: Upload JUnit Test Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: JUnit Test Report
+        path: my-app/target/surefire-reports/TEST-*.xml
+  maven:
+    name: Build
+    runs-on: windows-latest
+    needs: junit
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: temurin
+        cache: maven
+    - name: Build Project
+      run: mvn -f my-app/pom.xml clean install -Dmaven.test.failure.ignore=true
+  sonar:
+    name: Sonar Analysis
+    runs-on: windows-latest
+    needs: maven
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: temurin
+        cache: maven
+    - name: Sonar Analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      run: mvn -f my-app/pom.xml clean verify sonar:sonar -Dsonar.projectKey=CalculatorApp
+        -Dsonar.sources=src/main/java -Dsonar.tests=src/test/java -Dsonar.java.binaries=target/classes
+        -Dsonar.coverage.jacoco.xmlReportPaths=**/jacoco.xml
+  artifactory:
+    name: Upload to Artifactory
+    runs-on: windows-latest
+    needs: sonar
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Upload to Artifactory
+      env:
+        JF_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+        JF_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+        JF_URL: ${{ secrets.ARTIFACTORY_URL }}
+      run: mvn -f my-app/pom.xml package && curl -X PUT -u "$JF_USERNAME:$JF_PASSWORD"
+        -T mvcapp/target/mvcapp.war "$JF_URL/demo-repo/dev/app-name.war
+  docker-image:
+    name: Docker Image Build and Push
+    runs-on: windows-latest
+    needs: artifactory
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Login to Docker Registry
+      run: docker login ${{ secrets.DOCKER_REGISTRY_URL }} -u ${{secrets.DOCKER_REGISTRY_USERNAME}}
+        -p ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+    - name: Build Docker Image
+      run: docker build --build-arg="ARTIFACTORY_USERNAME=${{secrets.ARTIFACTORY_USERNAME}}"
+        --build-arg="ARTIFACTORY_PASSWORD=${{secrets.ARTIFACTORY_PASSWORD}}" --build-arg="ARTIFACTORY_URL=${{secrets.ARTIFACTORY_URL}}"
+        -t ${{secrets.DOCKER_REGISTRY_URL}}/demo-1:${{github.run_number}} .
+    - name: Push Image to Docker Registry
+      run: docker push ${{ secrets.DOCKER_REGISTRY_URL }}/demo-1:${{ github.run_number
+        }}
+  monitor:
+    name: Monitoring Using Prometheus and Grafana
+    runs-on: windows-latest
+    needs: docker-run
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup
+      env:
+        CADDY_USER: ${{ secrets.CADDY_USER }}
+        CADDY_PASSWORD: ${{ secrets.CADDY_PASSWORD }}
+        CADDY_PASSWORD_HASH: ${{ secrets.CADDY_PASSWORD_HASH }}
+      run: git clone ${{ vars.MONITOR_REPO_URL }} && cd dockprom && ADMIN_USER=$CADDY_USER
+        ADMIN_PASSWORD=$CADDY_PASSWORD ADMIN_PASSWORD_HASH=$CADDY_PASSWORD_HASH &&
+        docker compose up -d
+  selenium:
+    name: Selenium Automation Test
+    runs-on: windows-latest
+    needs: monitor
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Run Selenium Tests
+      run: export JAVA_HOME=/opt/jdk-17/ && export M2_HOME=/opt/maven-3.9.6/ && export
+        PATH=$PATH:$JAVA_HOME/bin:$M2_HOME/bin && mvn -f selenium/pom.xml test -Dmaven.test.failure.ignore=true
+        -Dhostname=192.168.56.102 -Dport=9020 -Dcontext=/mvcapp/calculate
+    - name: Upload Selenium Test Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: Selenium Test Report
+        path: selenium/target/surefire-reports/emailable-report.html
+  jmeter:
+    name: JMeter Performance Test
+    runs-on: windows-latest
+    needs: selenium
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Run JMeter Tests
+      run: export JAVA_HOME=/opt/jdk-17/ && export M2_HOME=/opt/maven-3.9.6/ && export
+        JMETER_HOME=/opt/apache-jmeter-5.6.3/ && export PATH=$PATH:$JAVA_HOME/bin:$M2_HOME/bin:$JMETER_HOME/bin
+        && mvn -f jmeter/pom.xml clean verify -Dmaven.test.failure.ignore=true -Dhostname=192.168.56.102
+        -Dport=9020 -Dcontext=/mvcapp/calculate
+    - name: Upload JMeter Performance Test Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: JMeter Performance Test Report
+        path: jmeter/target/jmeter/reports
