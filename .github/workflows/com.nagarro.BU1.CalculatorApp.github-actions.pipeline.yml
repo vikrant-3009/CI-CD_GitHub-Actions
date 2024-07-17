@@ -92,6 +92,23 @@ jobs:
     - name: Push Image to Docker Registry
       run: docker push ${{ secrets.DOCKER_REGISTRY_URL }}/demo-1:${{ github.run_number
         }}
+  docker-run:
+    name: Docker Image Deployment
+    runs-on: windows-latest
+    needs: docker-image
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Login to Docker Registry
+      run: docker login ${{ secrets.DOCKER_REGISTRY_URL }} -u ${{ secrets.DOCKER_REGISTRY_USERNAME
+        }} -p ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+    - name: Pre Docker Run
+      run: docker ps -q -a --filter name="^mvcapp$" | xargs -r docker stop mvcapp
+        || true && docker ps -q -a --filter name="^mvcapp$" | xargs -r docker rm mvcapp
+        || true
+    - name: Run the Container
+      run: docker run -d -p 9020:8080 --name mvcapp ${{ secrets.DOCKER_REGISTRY_URL
+        }}/demo-1:${{ github.run_number }}
   monitor:
     name: Monitoring Using Prometheus and Grafana
     runs-on: windows-latest
